@@ -111,7 +111,7 @@ FIREBASE_PROJECT_ID=
 FIREBASE_CLIENT_EMAIL=
 FIREBASE_PRIVATE_KEY=
 MONGODB_URI=
-JWT_SECRET=
+JWT_SECRET="my_super_secure_random_secret_key_123"
 ```
 
 Replace the placeholder values with your actual **[Firebase](https://firebase.google.com/)**, **[Vapi](https://vapi.ai/)** credentials.
