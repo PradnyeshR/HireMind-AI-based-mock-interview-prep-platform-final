@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HireMind Project Report</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: 'dark',
+            securityLevel: 'loose'
+        });
+        window.mermaid = mermaid;
+    </script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px;
+            background-color: #fff;
+        }
+
+        @media print {
+            body {
+                max-width: 100%;
+                padding: 0;
+            }
+
+            .no-print {
+                display: none;
+            }
+        }
+
+        pre {
+            background-color: #f6f8fa;
+            padding: 16px;
+            border-radius: 6px;
+            overflow: auto;
+        }
+
+        code {
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+            font-size: 85%;
+            background-color: rgba(27, 31, 35, 0.05);
+            padding: 0.2em 0.4em;
+            border-radius: 3px;
+        }
+
+        pre code {
+            background-color: transparent;
+            padding: 0;
+        }
+
+        h1,
+        h2,
+        h3 {
+            border-bottom: 1px solid #eaecef;
+            padding-bottom: 0.3em;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 16px;
+        }
+
+        th,
+        td {
+            padding: 6px 13px;
+            border: 1px solid #dfe2e5;
+        }
+
+        tr:nth-child(2n) {
+            background-color: #f6f8fa;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+            background-color: #202020;
+            /* Dark background for diagrams */
+            padding: 20px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="no-print"
+        style="background: #e1f5fe; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #0288d1; color: #01579b;">
+        <strong>Instructions:</strong> This report is formatted for printing. Use your browser's "Print" function (Cmd+P
+        or Ctrl+P) and select "Save as PDF" as the destination.
+    </div>
+    <div id="content"></div>
+    <div id="markdown-source" style="display: none;">
+        # HireMind Project Report
+
+        ## 1. Tech Stack
+
+        The project utilizes a modern, full-stack JavaScript/TypeScript architecture centered around Next.js.
+
+        ### Core Framework & Language
+        - **Framework**: [Next.js 15](https://nextjs.org/) (App Router)
+        - **Language**: [TypeScript](https://www.typescriptlang.org/)
+        - **Runtime**: Node.js
+
+        ### Frontend & UI
+        - **Styling**: [Tailwind CSS](https://tailwindcss.com/) (v4)
+        - **UI Components**: [shadcn/ui](https://ui.shadcn.com/) (based on Radix UI)
+        - **Icons**: [Lucide React](https://lucide.dev/)
+        - **Animations**: `tailwindcss-animate`, `tw-animate-css`
+        - **Forms**: `react-hook-form` with `@hookform/resolvers` and `zod` for validation
+        - **Notifications**: `sonner`
+
+        ### Backend & Database
+        - **Database**: [MongoDB](https://www.mongodb.com/) (v7)
+        - **ORM/ODM**: [Mongoose](https://mongoosejs.com/) (v9)
+        - **Authentication**: [Firebase Authentication](https://firebase.google.com/) (v11) & `firebase-admin`
+
+        ### AI & Machine Learning
+        - **Generative AI**: [Google Gemini](https://deepmind.google/technologies/gemini/) (`@google/generative-ai`,
+        `ai`, `@ai-sdk/google`)
+        - **Voice AI**: [Vapi](https://vapi.ai/) (`@vapi-ai/web`)
+        - **Document Processing**: `pdf-parse` (for Resume parsing)
+
+        ## 2. System Architecture
+
+        The application follows a **Monolithic Architecture** using the Next.js App Router, where frontend and backend
+        logic coexist in the same repository.
+
+        ### High-Level Structure
+        - **Client-Side**: React components rendered via Next.js (Server Components & Client Components).
+        - **Server-Side**: Next.js API Routes (`app/api/*`) handle business logic, database interactions, and external
+        API calls.
+        - **Database**: MongoDB serves as the primary persistent storage.
+        - **External Services**:
+        - **Firebase**: Manages user identity and authentication tokens.
+        - **Vapi**: Handles real-time voice conversational AI.
+        - **Google Gemini**: Provides text generation and analysis (Resume ATS check, Interview feedback).
+
+        ### Key Directories
+        - `app/`: Contains the application routes and API endpoints.
+        - `(auth)/`: Authentication-related pages (Login/Signup).
+        - `(mongo)/`: Routes likely interacting heavily with MongoDB.
+        - `api/`: Backend API endpoints (`ats-check`, `vapi`, etc.).
+        - `components/`: Reusable UI components.
+        - `lib/`: Utility functions, database connection logic (`mongodb.ts`), and server actions.
+        - `models/`: Mongoose schema definitions (`User.ts`, `Interview.ts`).
+
+        ## 3. System Design
+
+        ### High-Level Architecture
+
+        ```mermaid
+        graph TD
+        %%{init: {'theme': 'dark'}}%%
+
+        subgraph Client_Side [Client Side]
+        direction TB
+        Client[Next.js Frontend UI]
+        end
+
+        subgraph Server_Side [Server Side]
+        direction TB
+        Server[Next.js API Routes]
+        DB[(MongoDB Database)]
+        end
+
+        subgraph External_Services [External Services]
+        direction TB
+        Firebase[Firebase Auth]
+        Vapi[Vapi Voice AI]
+        Gemini[Google Gemini AI]
+        end
+
+        Client -- "1. HTTP / API Calls" --> Server
+        Client -- "2. Auth SDK (Login/Signup)" --> Firebase
+        Client -- "3. Real-time Voice Stream" --> Vapi
+
+        Server -- "4. Mongoose ODM" --> DB
+        Server -- "5. Admin SDK (Verify Token)" --> Firebase
+        Server -- "6. Generate Content / Analyze" --> Gemini
+        Server -- "7. Webhooks / Config" --> Vapi
+        ```
+
+        ### Data Model
+        The database schema is designed around Users and their Interview sessions.
+
+        #### User Entity
+        - **Fields**: `name`, `email`, `password`.
+        - **Purpose**: Stores user credentials and profile information.
+
+        #### Interview Entity
+        - **Fields**:
+        - `user`: Reference to the User.
+        - `jobRole`, `techStack`, `yearsOfExperience`: Metadata for the interview context.
+        - `resumeText`: Parsed content of the user's resume.
+        - `questions`: Array of questions asked, including user answers and AI analysis.
+        - `feedback`: Comprehensive feedback (strengths, improvements, overall score).
+        - `status`: Lifecycle state (`pending`, `in-progress`, `completed`).
+
+        ```mermaid
+        erDiagram
+        %%{init: {'theme': 'dark'}}%%
+        USER ||--o{ INTERVIEW : has
+        USER {
+        string name
+        string email
+        string password
+        }
+        INTERVIEW {
+        ObjectId user
+        string jobRole
+        string[] techStack
+        int yearsOfExperience
+        string resumeText
+        string status
+        int overallScore
+        }
+        ```
+
+        ### Key Workflows
+
+        #### 1. Authentication
+        - Users sign up/login via Firebase.
+        - Session management is handled via client-side contexts (`AuthContext`) and likely verified on the server via
+        Firebase Admin SDK.
+
+        #### 2. ATS Resume Check
+        - **Input**: User uploads a PDF resume and optional job description.
+        - **Process**:
+        1. File is sent to `/api/ats-check`.
+        2. `pdf-parse` extracts text from the PDF.
+        3. Google Gemini (`gemini-1.5-flash`) analyzes the text against the job description.
+        - **Output**: JSON object with score, strengths, missing keywords, and improvement suggestions.
+
+        ```mermaid
+        sequenceDiagram
+        %%{init: {'theme': 'dark'}}%%
+        autonumber
+        participant User
+        participant Client as Frontend (UI)
+        participant API as API (/api/ats-check)
+        participant Gemini as Google Gemini
+
+        User->>Client: Upload PDF Resume & Job Desc
+        Client->>API: POST /api/ats-check (FormData)
+
+        rect rgb(50, 50, 50)
+        note right of API: Server Processing
+        API->>API: Parse PDF (pdf-parse) -> text
+        API->>Gemini: Generate Content (Prompt + Resume Text)
+        Gemini-->>API: JSON Analysis (Score, Feedback)
+        end
+
+        API-->>Client: Return Analysis JSON
+        Client->>User: Display ATS Score & Insights
+        ```
+
+        #### 3. Mock Interview
+        - **Setup**: User defines role, tech stack, and experience.
+        - **Execution**: Vapi AI conducts a voice-based interview.
+        - **Feedback**: Post-interview, the transcript is analyzed by Gemini to generate detailed feedback and scores,
+        which are stored in MongoDB.
+
+        ```mermaid
+        sequenceDiagram
+        %%{init: {'theme': 'dark'}}%%
+        autonumber
+        participant User
+        participant Client as Frontend
+        participant Vapi as Vapi AI
+        participant API as API Routes
+        participant DB as MongoDB
+        participant Gemini as Google Gemini
+
+        User->>Client: Click "Start Interview"
+        Client->>Vapi: Initialize Voice Call
+
+        loop Voice Conversation
+        Vapi->>User: Ask Question (Voice Output)
+        User->>Vapi: Answer (Voice Input)
+        end
+
+        User->>Client: End Interview
+        Client->>API: POST /api/interview/[id]/complete
+
+        rect rgb(50, 50, 50)
+        note right of API: Feedback Generation
+        API->>DB: Fetch Interview Transcript
+        API->>Gemini: Analyze Transcript & Generate Feedback
+        Gemini-->>API: Structured Feedback (JSON)
+        API->>DB: Update Interview (Score, Status='completed')
+        end
+
+        API-->>Client: Return Success
+        Client->>User: Redirect to Results Page
+        ```
+
+        ### Interview Lifecycle State Machine
+
+        ```mermaid
+        stateDiagram-v2
+        %%{init: {'theme': 'dark'}}%%
+        [*] --> Pending : Created
+        Pending --> InProgress : User Starts Interview
+        InProgress --> Completed : User Finishes / Submit
+        Completed --> [*] : Results Available
+        ```
+
+        ### 5. API Specification
+
+        #### Authentication Endpoints
+
+        **POST /api/auth-ai/signup**
+        - **Purpose**: Register a new user.
+        - **Request Body**:
+        ```json
+        {
+        "name": "John Doe",
+        "email": "john@example.com",
+        "password": "securepassword123"
+        }
+        ```
+        - **Response (201 Created)**:
+        ```json
+        {
+        "success": true,
+        "message": "User created successfully",
+        "token": "eyJhbGciOiJIUzI1...",
+        "user": { "id": "...", "name": "...", "email": "..." }
+        }
+        ```
+
+        **POST /api/auth-ai/login**
+        - **Purpose**: Authenticate an existing user.
+        - **Request Body**:
+        ```json
+        {
+        "email": "john@example.com",
+        "password": "securepassword123"
+        }
+        ```
+        - **Response (200 OK)**:
+        ```json
+        {
+        "success": true,
+        "message": "Login successful",
+        "token": "eyJhbGciOiJIUzI1...",
+        "user": { "id": "...", "name": "...", "email": "..." }
+        }
+        ```
+
+        #### Interview Endpoints
+
+        **POST /api/interview-ai/[id]/complete**
+        - **Purpose**: Finalize an interview, calculate scores, and generate feedback.
+        - **Headers**: `Authorization: Bearer <token>`
+            - **Response (200 OK)**:
+            ```json
+            {
+            "message": "Interview completed successfully",
+            "success": true,
+            "interviewId": "...",
+            "status": "completed",
+            "redirectUrl": "/interview-ai/.../results"
+            }
+            ```
+
+            **POST /api/ats-check**
+            - **Purpose**: Analyze a resume PDF against a job description.
+            - **Request (FormData)**:
+            - `file`: PDF file binary.
+            - `jobDescription`: String (optional).
+            - **Response (200 OK)**: JSON object containing analysis (score, strengths, improvements, etc.).
+
+            ## 6. Security & Authentication
+
+            ### Implementation Details
+            - **JWT (JSON Web Tokens)**: Used for stateless session management. Tokens are signed with `JWT_SECRET` and
+            expire in 7 days.
+            - **Password Hashing**: `bcryptjs` is used to hash passwords with a salt round of 10 before storing them in
+            MongoDB.
+            - **Route Protection**: API routes check for the `Authorization` header and verify the JWT token using
+            `jsonwebtoken`.
+            - **Data Isolation**: API endpoints verify that the requested resource (e.g., Interview) belongs to the
+            authenticated user (`interview.user.toString() !== userId`).
+
+            ### Environment Variables
+            Sensitive configuration is managed via `.env` files:
+            - `JWT_SECRET`: Secret key for signing tokens.
+            - `MONGODB_URI`: Connection string for the database.
+            - `GEMINI_API_KEY`: API key for Google's Generative AI.
+            - `NEXT_PUBLIC_VAPI_WEB_TOKEN`: Public token for Vapi client-side SDK.
+
+            ## 7. Deployment & DevOps
+
+            - **Build Process**: `next build` creates an optimized production build.
+            - **Hosting**: Can be deployed to Vercel, Netlify, or any Node.js compatible hosting.
+            - **Database**: MongoDB Atlas is recommended for production database hosting.
+    </div>
+
+    <script>
+        // Get markdown content
+        const markdown = document.getElementById('markdown-source').innerText;
+
+        // Configure marked
+        marked.setOptions({
+            highlight: function (code, lang) {
+                if (lang === 'mermaid') {
+                    return '<div class="mermaid">' + code + '</div>';
+                }
+                return code;
+            }
+        });
+
+        // Custom renderer to handle mermaid code blocks specifically if highlight doesn't catch them all
+        const renderer = new marked.Renderer();
+        const originalCodeRenderer = renderer.code;
+        renderer.code = function (code, language) {
+            if (language === 'mermaid') {
+                return '<div class="mermaid">' + code + '</div>';
+            }
+            return originalCodeRenderer.call(this, code, language);
+        };
+
+        // Render markdown
+        document.getElementById('content').innerHTML = marked.parse(markdown, { renderer: renderer });
+
+        // Initialize mermaid after rendering
+        setTimeout(() => {
+            window.mermaid.run({
+                nodes: document.querySelectorAll('.mermaid')
+            });
+        }, 100);
+    </script>
+</body>
+
+</html>
