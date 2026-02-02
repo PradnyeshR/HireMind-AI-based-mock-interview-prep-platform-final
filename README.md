@@ -96,7 +96,6 @@ Create a new file named `.env.local` in the root of your project and add the fol
 ```env
 NEXT_PUBLIC_VAPI_WEB_TOKEN=
 NEXT_PUBLIC_VAPI_WORKFLOW_ID=
-
 GOOGLE_GENERATIVE_AI_API_KEY=
 
 NEXT_PUBLIC_BASE_URL=
@@ -111,6 +110,8 @@ NEXT_PUBLIC_FIREBASE_APP_ID=
 FIREBASE_PROJECT_ID=
 FIREBASE_CLIENT_EMAIL=
 FIREBASE_PRIVATE_KEY=
+MONGODB_URI=
+JWT_SECRET=
 ```
 
 Replace the placeholder values with your actual **[Firebase](https://firebase.google.com/)**, **[Vapi](https://vapi.ai/)** credentials.
